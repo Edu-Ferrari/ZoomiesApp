@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ZoomiesApp: App {
@@ -13,5 +14,6 @@ struct ZoomiesApp: App {
         WindowGroup {
             TabBar()
         }
+        .modelContainer(for: [User.self, Zoomie.self, Item.self, Map.self, Checkpoint.self, Emblem.self, Chest.self])
     }
 }

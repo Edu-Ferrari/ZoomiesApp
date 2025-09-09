@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct TabBar: View {
+    @Environment(\.modelContext) private var context
     var body: some View {
         TabView {
             
