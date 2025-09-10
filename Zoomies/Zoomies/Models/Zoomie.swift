@@ -6,10 +6,19 @@
 //
 
 import Foundation
+import SwiftData
 
-public struct Zoomie {
-    var id = UUID()
+@Model
+public class Zoomie {
+    @Attribute(.unique) public var id = UUID()
     var name: String
     var owner: User
     var type: Species
+    
+    init(name: String, owner: User, type: Species? = nil) {
+        self.name = name
+        self.owner = owner
+        self.type = type ?? Species.random()
+    }
+
 }

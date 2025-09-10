@@ -5,76 +5,59 @@
 ////  Created by Guilherme Ghise Rossoni on 08/09/25.
 ////
 //
-//import Foundation
-//
-//public class Mission {
-//    var id: UUID
-//    var name: String
-//    var description: String
-//    var startDate: Date?
-//    var endDate: Date?
-//    
-//    init(
-//        id: UUID = UUID(),
-//        name: String,
-//        description: String,
-//        startDate: Date? = nil,
-//        endDate: Date? = nil
-//    ) {
-//        self.id = id
-//        self.name = name
-//        self.description = description
-//        self.startDate = startDate
-//        self.endDate = endDate
-//    }
-//}
-//
-//public class MissionWithTier: Mission {
-//    var tier: Int
-//    var distanceBronze: Double
-//    var distanceSilver: Double
-//    var distanceGold: Double
-//    var rewardBronze: Bool
-//    var rewardSilver: Bool
-//    var rewardGold: Bool
-//    var emblemBronze: Bool
-//    var emblemSilver: Bool
-//    var emblemGold: Bool
-//    
-//    init(
-//        id: UUID = UUID(),
-//        name: String,
-//        description: String,
-//        startDate: Date? = nil,
-//        endDate: Date? = nil,
-//        tier: Int,
-//        distanceBronze: Double,
-//        distanceSilver: Double,
-//        distanceGold: Double,
-//        rewardBronze: Double,
-//        rewardSilver: Double,
-//        rewardGold: Double,
-//        emblemBronze: Double,
-//        emblemSilver: Double,
-//        emblemGold: Double
-//    ) {
-//        self.tier = tier
-//        self.distanceBronze = distanceBronze
-//        self.distanceSilver = distanceSilver
-//        self.distanceGold = distanceGold
-//        self.rewardBronze = rewardBronze
-//        self.rewardSilver = rewardSilver
-//        self.rewardGold = rewardGold
-//        self.emblemBronze = emblemBronze
-//        self.emblemSilver = emblemSilver
-//        self.emblemGold = emblemGold
-//        
-//        super.init(
-//            id: id,
-//            name: name,
-//            description: description,
-//            startDate: startDate,
-//            endDate: endDate
-//        )
-//    }
-//}
+import Foundation
+import SwiftData
+
+
+public enum MissionKind: String, Codable {
+    case tier
+    case noTier
+}
+
+@Model
+public class Mission {
+    @Attribute(.unique) public var id: UUID
+    var name: String
+    var details: String
+    var startTime: Date?
+    var endTime: Date?
+    var metric: String
+    var unit: String
+    var kind: MissionKind
+
+    // Campos exclusivos de missões tier
+    var targetTier1: Int?
+    var targetTier2: Int?
+    var targetTier3: Int?
+    var reward1: Int?
+    var reward2: Int?
+    var reward3: Int?
+    var emblem1: Emblem?
+    var emblem2: Emblem?
+    var emblem3: Emblem?
+
+    // Campos exclusivos de missão sem tier
+    var target: String?
+    var reward: Int?
+    var emblem: Emblem?
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        details: String,
+        startTime: Date? = nil,
+        endTime: Date? = nil,
+        metric: String,
+        unit: String,
+        kind: MissionKind
+    ) {
+        self.id = id
+        self.name = name
+        self.details = details
+        self.startTime = startTime
+        self.endTime = endTime
+        self.metric = metric
+        self.unit = unit
+        self.kind = kind
+    }
+}
