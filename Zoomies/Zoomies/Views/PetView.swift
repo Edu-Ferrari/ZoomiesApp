@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct MissionView: View {
+struct PetView: View {
     var body: some View {
-        Text("Missões")
+        Text("Pet")
     }
 }

@@ -1,29 +1,41 @@
-//
-//  TabBar.swift
-//  Zoomies
-//
-//  Created by Guilherme Ghise Rossoni on 08/09/25.
-//
+    //  TabBar.swift
+    //  Zoomies
+    //
+    //  Created by Guilherme Ghise Rossoni on 08/09/25.
+    //
 
 import SwiftUI
-import SwiftData
 
 struct TabBar: View {
-    @Environment(\.modelContext) private var context
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.white
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+    
     var body: some View {
         TabView {
-            
             // Mapa
             MapView()
                 .tabItem {
                     Label("Mapa", systemImage: "map.fill")
                 }
             
-            // Home
-            HomeView()
+            // Pet
+            PetView()
                 .tabItem {
-                    Label("Home", systemImage: "house.fill")
+                    Label("Pet", systemImage: "house.fill")
                 }
+            
+            // Loja
+            ShopView()
+                .tabItem {
+                    Label("Loja", systemImage: "cart.fill")
+                }
+            
             
             // Missões
             MissionView()
@@ -34,3 +46,7 @@ struct TabBar: View {
     }
 }
 
+
+#Preview {
+    TabBar()
+}

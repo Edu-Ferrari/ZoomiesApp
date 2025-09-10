@@ -6,10 +6,8 @@
 //
 
 import Foundation
-import SwiftData
 
-@Model
-public class Checkpoint {
+public struct Checkpoint {
     var level : Int
     var chests : [Chest]
     var distance : Double
@@ -17,8 +15,7 @@ public class Checkpoint {
     var rewardClaimed : Bool
     var mapId : Int
     
-    
-    init(level: Int, chests: [Chest], distance: Double, isUnlocked: Bool, rewardClaimed: Bool, mapId: Int) {
+    public init(level: Int, chests: [Chest], distance: Double, isUnlocked: Bool, rewardClaimed: Bool, mapId: Int) {
         self.level = level
         self.chests = chests
         self.distance = distance

@@ -6,17 +6,19 @@
 //
 
 import Foundation
-import SwiftData
 
-@Model
-public class Map {
-    public var id: Int
+public struct Map {
+    var id = UUID()
     var name: String
     var checkpoints : [Checkpoint]
     
-    init(id: Int, name: String, checkpoints: [Checkpoint]) {
-        self.id = id
-        self.name = name
-        self.checkpoints = checkpoints
-    }
+    public init(name: String, checkpoints: [Checkpoint]) {
+            self.name = name
+            self.checkpoints = checkpoints
+        }
+}
+
+/// Identidade estável para ForEach sem precisar alterar teus models
+public extension Checkpoint {
+    var composedId: Int { mapId &* 10_000 &+ level }
 }

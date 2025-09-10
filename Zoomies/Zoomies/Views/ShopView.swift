@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct ShopView: View {
     var body: some View {
-        Text("Home")
+        Text("Loja")
     }
 }
