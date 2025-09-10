@@ -10,8 +10,16 @@ import SwiftData
 
 
 public enum MissionKind: String, Codable {
-    case tier
-    case noTier
+    case tier = "tier"
+    case noTier = "noTier"
+}
+
+public enum MissionFrequency: String, Codable {
+    case daily = "daily"
+    case weekly = "weekly"
+    case monthly = "monthly"
+    case yearly = "yearly"
+    case unlimited = "unlimited"
 }
 
 @Model
@@ -24,6 +32,7 @@ public class Mission {
     var metric: String
     var unit: String
     var kind: MissionKind
+    var frequency: MissionFrequency
 
     // Campos exclusivos de missões tier
     var targetTier1: Int?
@@ -49,7 +58,8 @@ public class Mission {
         endTime: Date? = nil,
         metric: String,
         unit: String,
-        kind: MissionKind
+        kind: MissionKind,
+        frequency: MissionFrequency
     ) {
         self.id = id
         self.name = name
@@ -59,5 +69,6 @@ public class Mission {
         self.metric = metric
         self.unit = unit
         self.kind = kind
+        self.frequency = frequency
     }
 }
