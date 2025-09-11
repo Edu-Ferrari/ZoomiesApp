@@ -10,10 +10,8 @@ import SwiftUI
 struct MissionCard: View {
     
     var mission: Mission
-    var progress: Int = 30
     
     var body: some View {
-        
         
         HStack(spacing: 16) {
             
@@ -24,18 +22,17 @@ struct MissionCard: View {
                 
                 Text("\(mission.name)")
                 
-                if let target = mission.target {
-                    Text("\(progress) / \(target)")
-                        .frame(width: 158)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.blue)
-                        )
-                }
+                MissionProgressBar(progress: mission.progress, goal: mission.goal, metric: mission.metric)
+                
             }
             
-            Circle()
-                .frame(width: 54, height: 54)
+            VStack {
+                
+                Text("\(mission.coinReward) coins")
+                Text("\(mission.gemReward) gems")
+                
+            }
+            
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -43,23 +40,11 @@ struct MissionCard: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.red)
         )
-        
-        
-    
     }
 }
 
 #Preview {
-    MissionCard(mission: {
-        let m = Mission(
-            name: "Complete uma maratona",
-            details: "Percorra 42 km",
-            metric: "distance",
-            unit: "km",
-            kind: .noTier,
-            frequency: .unlimited
-        )
-        m.target = "10"
-        return m
-    }())
+    
+    let m1 = Mission(name: "Missão 1", details: "Percorra 10 Km", metric: "km", progress: 10, goal: 10, coinReward: 15, gemReward: 5)
+    MissionCard(mission: m1)
 }

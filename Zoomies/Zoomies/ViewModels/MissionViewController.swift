@@ -14,50 +14,11 @@ public class MissionViewController {
     
     func mockMissions() {
         
-        let m1 = Mission(
-            name: "Complete meia maratona",
-            details: "Percorra 21 km",
-            metric: "distance",
-            unit: "km",
-            kind: .noTier,
-            frequency: .unlimited
-        )
-        m1.target = "10"
-        missions.append(m1)
+        let m1 = Mission(name: "Missão 1", details: "Percorra 10 Km", metric: "km", progress: 5, goal: 10, coinReward: 15, gemReward: 5)
+        let m2 = Mission(name: "Missão 2", details: "Percorra 20 Km", metric: "km", progress: 5, goal: 20, coinReward: 30, gemReward: 10)
+        let m3 = Mission(name: "Missão 3", details: "Percorra 30 Km", metric: "km", progress: 5, goal: 30, coinReward: 45, gemReward: 15)
         
-        let m2 = Mission(
-            name: "Complete uma maratona",
-            details: "Percorra 42 km",
-            metric: "distance",
-            unit: "km",
-            kind: .noTier,
-            frequency: .unlimited
-        )
-        m2.target = "10"
-        missions.append(m2)
-        
-        let m3 = Mission(
-            name: "Complete uma maratona",
-            details: "Percorra 42 km",
-            metric: "distance",
-            unit: "km",
-            kind: .noTier,
-            frequency: .unlimited
-        )
-        m3.target = "10"
-        missions.append(m3)
-        
-        let m4 = Mission(
-            name: "Complete uma maratona",
-            details: "Percorra 42 km",
-            metric: "distance",
-            unit: "km",
-            kind: .noTier,
-            frequency: .unlimited
-        )
-        m4.target = "10"
-        missions.append(m4)
-
+        missions.append(contentsOf: [m1, m2, m3])
     }
     
     
