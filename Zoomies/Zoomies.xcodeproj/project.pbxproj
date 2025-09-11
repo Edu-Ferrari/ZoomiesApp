@@ -254,7 +254,7 @@
 				CODE_SIGN_ENTITLEMENTS = Zoomies/Zoomies.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 75BF5C5F9K;
+				DEVELOPMENT_TEAM = 5G3BBV2M44;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Permissão para o app ler seus passos e distância!";
@@ -286,7 +286,7 @@
 				CODE_SIGN_ENTITLEMENTS = Zoomies/Zoomies.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 75BF5C5F9K;
+				DEVELOPMENT_TEAM = 5G3BBV2M44;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Permissão para o app ler seus passos e distância!";
