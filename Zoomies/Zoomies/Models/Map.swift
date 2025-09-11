@@ -6,19 +6,20 @@
 //
 
 import Foundation
+import SwiftData
 
-public struct Map {
-    var id = UUID()
+/// Um mapa composto por múltiplos checkpoints.
+@Model
+public class Map {
+    /// Identificador estável. `@Attribute(.unique)` garante unicidade no store.
+    @Attribute(.unique) public var id = UUID()
+    /// Nome exibido em UI (usado para ordenação simples no `@Query`).
     var name: String
+    /// Checkpoints associados a este mapa.
     var checkpoints : [Checkpoint]
-    
-    public init(name: String, checkpoints: [Checkpoint]) {
-            self.name = name
-            self.checkpoints = checkpoints
-        }
-}
 
-/// Identidade estável para ForEach sem precisar alterar teus models
-public extension Checkpoint {
-    var composedId: Int { mapId &* 10_000 &+ level }
+    public init(name: String, checkpoints: [Checkpoint]) {
+        self.name = name
+        self.checkpoints = checkpoints
+    }
 }

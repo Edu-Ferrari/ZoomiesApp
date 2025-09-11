@@ -1,12 +1,9 @@
-//
-//  CheckpointDot.swift
-//  Zoomies
-//
-//  Created by Guilherme Ghise Rossoni on 09/09/25.
-//
+// CheckpointDot.swift
+// Componente visual reutilizável para um checkpoint (dot) do mapa.
 
 import SwiftUI
 
+/// Estilo visual de `CheckpointDot` (tamanhos/cores/borda).
 public struct CheckpointDotStyle {
     public var baseSize: CGFloat
     public var colorLocked: Color
@@ -29,12 +26,19 @@ public struct CheckpointDotStyle {
     }
 }
 
+/// Bolinha de checkpoint numerada com estados de seleção e desbloqueio.
 public struct CheckpointDot: View {
+    /// Nível exibido dentro do dot (1..N)
     public let level: Int
-    public let reached: Bool      // já alcançado pela distância?
-    public let selected: Bool     // está selecionado/hover?
-    public let isUnlocked: Bool   // estado lógico vindo do domínio
+    /// Indica se o usuário já alcançou fisicamente este ponto (distância).
+    public let reached: Bool
+    /// Indica se o dot está destacado (ex.: mais próximo ao progresso).
+    public let selected: Bool
+    /// Estado lógico vindo do domínio (permite diferenciar de `reached`).
+    public let isUnlocked: Bool
+    /// Mostra um halo (aura) quando `reached == true`.
     public let showHaloWhenReached: Bool
+    /// Estilo visual (cores/tamanhos).
     public var style: CheckpointDotStyle
 
     public init(
@@ -60,7 +64,7 @@ public struct CheckpointDot: View {
         let border = style.borderWidth + (selected ? 1 : 0)
 
         ZStack {
-            // Disco base
+            // Disco base com borda de estado
             Circle()
                 .fill(style.background)
                 .overlay(

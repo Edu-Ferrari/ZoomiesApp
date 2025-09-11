@@ -1,4 +1,9 @@
-// CatmullRom.swift
+//
+//  Zoomie.swift
+//  Zoomies
+//
+//  Created by Guilherme Ghise Rossoni on 08/09/25.
+//
 // Utilitários para amostragem de curvas Catmull–Rom (trilha suave do mapa).
 
 import SwiftUI

@@ -6,7 +6,6 @@
 //
 
 /// Espécies
-
 public enum Species: Int, Codable {
     case cat = 1
     case dog = 2
@@ -20,7 +19,6 @@ public enum Species: Int, Codable {
 }
 
 /// Partes do corpo
-
 public enum BodyPart: Int, Codable {
     case head = 1
     case rightArm = 2
@@ -30,7 +28,6 @@ public enum BodyPart: Int, Codable {
 }
 
 /// Raridade
-
 public enum rarity: Int, Codable {
     case common = 1
     case rare = 2

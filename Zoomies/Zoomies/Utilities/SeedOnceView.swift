@@ -1,3 +1,9 @@
+//
+//  Zoomie.swift
+//  Zoomies
+//
+//  Created by Guilherme Ghise Rossoni on 08/09/25.
+//
 // SeedOnceView.swift
 // Wrapper que, na primeira execução, semeia um `Map` pré-configurado no store.
 

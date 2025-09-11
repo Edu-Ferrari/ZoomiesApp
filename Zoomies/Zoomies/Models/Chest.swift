@@ -9,7 +9,6 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-
 @Model
 public class Chest {
     @Attribute(.unique) public var id: UUID

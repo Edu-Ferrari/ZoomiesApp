@@ -1,5 +1,5 @@
 //
-//  ZoomiesApp.swift
+//  Zoomie.swift
 //  Zoomies
 //
 //  Created by Guilherme Ghise Rossoni on 08/09/25.
@@ -14,6 +14,7 @@ struct ZoomiesApp: App {
         WindowGroup {
             TabBar()
         }
+        // Container padrão persistente para os modelos do app.
         .modelContainer(for: [User.self, Zoomie.self, Item.self, Map.self, Checkpoint.self, Emblem.self, Chest.self])
     }
 }
