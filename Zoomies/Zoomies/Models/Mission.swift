@@ -1,74 +1,39 @@
-////
-////  Zoomie.swift
-////  Zoomies
-////
-////  Created by Guilherme Ghise Rossoni on 08/09/25.
-////
 //
+//  Mission.swift
+//  Zoomies
+//
+//  Created by Gabriel Barbosa on 11/09/25.
+//
+
 import Foundation
 import SwiftData
 
-
-public enum MissionKind: String, Codable {
-    case tier = "tier"
-    case noTier = "noTier"
-}
-
-public enum MissionFrequency: String, Codable {
-    case daily = "daily"
-    case weekly = "weekly"
-    case monthly = "monthly"
-    case yearly = "yearly"
-    case unlimited = "unlimited"
-}
-
 @Model
-public class Mission {
-    @Attribute(.unique) public var id: UUID
+class Mission: Identifiable {
+    var id: UUID = UUID()
     var name: String
     var details: String
-    var startTime: Date?
-    var endTime: Date?
     var metric: String
-    var unit: String
-    var kind: MissionKind
-    var frequency: MissionFrequency
-
-    // Campos exclusivos de missões tier
-    var targetTier1: Int?
-    var targetTier2: Int?
-    var targetTier3: Int?
-    var reward1: Int?
-    var reward2: Int?
-    var reward3: Int?
-    var emblem1: Emblem?
-    var emblem2: Emblem?
-    var emblem3: Emblem?
-
-    // Campos exclusivos de missão sem tier
-    var target: String?
-    var reward: Int?
+    var progress: Double
+    var goal: Double
+    var startDate: Date?
+    var endDate: Date?
+    var coinReward: Int
+    var gemReward: Int
     var emblem: Emblem?
-
-    init(
-        id: UUID = UUID(),
-        name: String,
-        details: String,
-        startTime: Date? = nil,
-        endTime: Date? = nil,
-        metric: String,
-        unit: String,
-        kind: MissionKind,
-        frequency: MissionFrequency
-    ) {
-        self.id = id
+    var rewardClaimed: Bool = false
+    var wasCompleted: Bool = false
+    
+    init(name: String, details: String, metric: String, progress: Double, goal: Double, startDate: Date? = nil, endDate: Date? = nil, coinReward: Int, gemReward: Int, emblem: Emblem? = nil) {
         self.name = name
         self.details = details
-        self.startTime = startTime
-        self.endTime = endTime
         self.metric = metric
-        self.unit = unit
-        self.kind = kind
-        self.frequency = frequency
+        self.progress = progress
+        self.goal = goal
+        self.startDate = startDate
+        self.endDate = endDate
+        self.coinReward = coinReward
+        self.gemReward = gemReward
+        self.emblem = emblem
     }
 }
