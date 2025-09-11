@@ -10,17 +10,26 @@ import SwiftUI
 import SwiftData
 
 struct MapView: View {
+    @EnvironmentObject private var healthKitManager: HealthKitManager
     @StateObject private var vm = MapViewController()
-    private let colorProgressFill = Color("progressFill")
-
-    // Busca o 1º mapa do banco
     @Query(sort: \Map.name) private var maps: [Map]
 
-    private let playerDistanceStart: Double = 0
+    // Persistência simples
+    private let lastSeenStepsKey = "map.lastSeenSteps"
+    private let lastSeenDateKey  = "map.lastSeenDate"
 
+    // Estado da animação
+    @State private var lastSeenSteps: Int = 0    // de onde animamos
+    @State private var animTimer: Timer?         // p/ cancelar animações antigas
+    @State private var didSetup = false          // evita duplicar setup em onAppear
+
+    // 👇 variável de debug, só lê do manager
+      private var debugStepsToday: Int {
+          healthKitManager.stepsToday
+      }
+    
     var body: some View {
         ZStack {
-            // Imagem de fundo do mapa (deve existir no Assets)
             Image("backgroundMap")
                 .resizable()
                 .scaledToFill()
@@ -30,16 +39,11 @@ struct MapView: View {
                 let size = geo.size
 
                 ZStack {
-                    // Linha de progresso
                     vm.progressPath()
-                        .stroke(
-                            colorProgressFill,
-                            style: .init(lineWidth: 20, lineCap: .round, lineJoin: .round)
-                        )
+                        .stroke(Color("progressFill", bundle: .main),
+                                style: .init(lineWidth: 20, lineCap: .round, lineJoin: .round))
 
-                    // Checkpoints SEMPRE visíveis
                     ForEach(vm.checkpointsRender()) { rcp in
-                        let pos = vm.pointAt(rcp.t)
                         CheckpointDot(
                             level: rcp.levelDisplay,
                             reached: rcp.isUnlocked,
@@ -48,47 +52,137 @@ struct MapView: View {
                             showHaloWhenReached: true,
                             style: .init(
                                 baseSize: 44,
-                                colorLocked: Color("checkpointLocked"),
-                                colorUnlocked: Color("checkpointUnlocked"),
+                                colorLocked: Color("checkpointLocked", bundle: .main),
+                                colorUnlocked: Color("checkpointUnlocked", bundle: .main),
                                 background: .white,
                                 borderWidth: 5
                             )
                         )
-                        .position(pos)
+                        .position(vm.pointAt(rcp.t))
                     }
 
-                    // Player (segue o progresso)
                     Circle()
-                        .fill(Color.red)
+                        .fill(.red)
                         .frame(width: 24, height: 24)
-                        .shadow(radius: 3, y: 2)
                         .position(vm.pointAt(vm.progresso))
                         .animation(.spring(response: 0.28, dampingFraction: 0.7), value: vm.progresso)
                 }
                 .onAppear {
                     vm.updateGeometry(for: size)
-                    vm.configure(map: maps.first, playerDistance: playerDistanceStart)
+                    vm.configure(map: maps.first, playerDistance: 0)
+                    if !didSetup {
+                        didSetup = true
+                        // carrega baseline persistido e posiciona o player lá
+                        lastSeenSteps = loadLastSeenStepsConsideringDayReset()
+                        vm.updatePlayerDistance(Double(lastSeenSteps))
+                        // anima do último visto → passos atuais
+                        animateFromLastSeenToCurrent()
+                    }
                 }
                 .onChange(of: size) { vm.updateGeometry(for: $0) }
-                .onChange(of: maps) { _, new in
-                    vm.configure(map: new.first, playerDistance: vm.playerDistance)
+                .onChange(of: maps) { _, _ in
+                    vm.configure(map: maps.first, playerDistance: vm.playerDistance)
+                    // reanima se trocar o mapa (raro, mas garante)
+                    animateFromLastSeenToCurrent()
+                }
+                .onChange(of: healthKitManager.stepsToday) { _, _ in
+                    // chegou um novo valor do HealthKit → anima do que o usuário viu por último
+                    animateFromLastSeenToCurrent()
                 }
             }
         }
-        // Slider de debug para simular avanço (desativar em produção)
-        .safeAreaInset(edge: .bottom) {
-            HStack {
-                Slider(value: $vm.progresso, in: 0...1, step: 0.001)
-                    .onChange(of: vm.progresso) { _ in vm.syncPlayerDistanceFromProgress() }
-            }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+        .onDisappear {
+            // salva o último visto quando sair da tela
+            persistLastSeen(steps: currentTargetSteps())
+            cancelAnim()
         }
-        .zIndex(1)
+    }
+
+    // MARK: - Persistência e dia novo
+
+    private func todayKeyString() -> String {
+        let f = DateFormatter()
+        f.calendar = Calendar.current
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        return f.string(from: Date())
+    }
+
+    /// Carrega o baseline; se trocou o dia ou os passos atuais < último visto, reseta para 0.
+    private func loadLastSeenStepsConsideringDayReset() -> Int {
+        let storedDate = UserDefaults.standard.string(forKey: lastSeenDateKey)
+        let today = todayKeyString()
+        let storedSteps = UserDefaults.standard.integer(forKey: lastSeenStepsKey)
+        let current = healthKitManager.stepsToday
+
+        // Virou o dia (datas diferentes) OU passos atuais menores (reset diário do HK)?
+        if storedDate != today || current < storedSteps {
+            persistLastSeen(steps: 0) // zera baseline pro novo dia
+            return 0
+        }
+        return storedSteps
+    }
+
+    private func persistLastSeen(steps: Int) {
+        UserDefaults.standard.set(steps, forKey: lastSeenStepsKey)
+        UserDefaults.standard.set(todayKeyString(), forKey: lastSeenDateKey)
+        lastSeenSteps = steps
+    }
+
+    // MARK: - Cálculo do alvo e animação
+
+    /// Passos alvo limitados ao mapa (último checkpoint).
+    private func currentTargetSteps() -> Int {
+        guard let map = vm.currentMap ?? maps.first else { return 0 }
+        let maxSteps = Int(map.checkpoints.map(\.distance).max() ?? 0)
+        return min(max(0, healthKitManager.stepsToday), maxSteps)
+    }
+
+    private func cancelAnim() {
+        animTimer?.invalidate()
+        animTimer = nil
+    }
+
+    /// Anima de `lastSeenSteps` (persistido) até `stepsToday` (clamp no mapa).
+    private func animateFromLastSeenToCurrent() {
+        guard let _ = vm.currentMap ?? maps.first else { return }
+
+        let target = currentTargetSteps()
+
+        // Se os passos diminuíram (ex.: reset do dia em tempo real), recomeça do 0.
+        if target < lastSeenSteps {
+            persistLastSeen(steps: 0)
+        }
+
+        let from = lastSeenSteps
+        let to   = max(lastSeenSteps, target) // nunca volta "para trás" visualmente
+
+        // Nada a animar
+        guard to > from else { return }
+
+        cancelAnim()
+
+        let totalDelta = to - from
+        // frames proporcionais ao delta para suavidade, com limites
+        let frames = min(90, max(24, totalDelta / 50))
+        let stepPerTick = max(1, totalDelta / frames)
+        var current = from
+
+        animTimer = Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true) { timer in
+            current += stepPerTick
+            if current >= to {
+                current = to
+                timer.invalidate()
+                self.animTimer = nil
+            }
+            withAnimation(.linear(duration: 0.02)) {
+                vm.updatePlayerDistance(Double(current)) // “distância” = passos
+            }
+            if current == to {
+                // Atualiza o “último visto” quando termina
+                persistLastSeen(steps: to)
+            }
+        }
     }
 }
 
-#Preview {
-    MapView()
-        .modelContainer(for: [Map.self, Checkpoint.self, Chest.self], inMemory: true)
-}

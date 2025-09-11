@@ -21,25 +21,26 @@ struct SeedOnceView<Content: View>: View {
     var body: some View {
         content
             .task {
-                // Não reinsere se já existir ao menos um mapa.
+                /// Não reinsere se já existir ao menos um mapa.
                 guard existingMaps.isEmpty else { return }
 
-                // Checkpoints de exemplo (10 níveis decrescentes por distância alvo).
-                let cps: [Checkpoint] = [
-                    .init(level: 1,  chests: [], distance: 1900, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 2,  chests: [], distance: 1700, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 3,  chests: [], distance: 1500, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 4,  chests: [], distance: 1300, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 5,  chests: [], distance: 1100, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 6,  chests: [], distance:  900, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 7,  chests: [], distance:  700, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 8,  chests: [], distance:  500, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 9,  chests: [], distance:  300, isUnlocked: false, rewardClaimed: false, mapId: 1),
-                    .init(level: 10, chests: [], distance:  100, isUnlocked: false, rewardClaimed: false, mapId: 1)
-                ]
+                /// Checkpoints de exemplo (10 níveis)
+                let stepsPerLevel = 250.0
+                let levels = 10
+                let cps: [Checkpoint] = (1...levels).map { level in
+                    .init(
+                        level: level,
+                        chests: [],
+                        distance: Double(level) * stepsPerLevel,
+                        isUnlocked: false,
+                        rewardClaimed: false,
+                        mapId: 1
+                    )
+                }
                 let map = Map(name: "Mapa 1", checkpoints: cps)
                 context.insert(map)
                 try? context.save()
+            
             }
     }
 }
