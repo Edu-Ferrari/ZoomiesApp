@@ -10,6 +10,7 @@ import SwiftUI
 struct MissionCard: View {
     
     var mission: Mission
+    var claimAction: () -> Void
     
     var body: some View {
         
@@ -21,18 +22,54 @@ struct MissionCard: View {
             VStack() {
                 
                 Text("\(mission.name)")
-                
+
                 MissionProgressBar(progress: mission.progress, goal: mission.goal, metric: mission.metric)
                 
             }
-            
-            VStack {
+            if mission.progress >= mission.goal && !mission.rewardClaimed {
+                Button(action: claimAction) {
+                    VStack {
+                        
+                        Text("\(mission.coinReward) coins")
+                            .foregroundStyle(.yellow)
+                        
+                        Text("\(mission.gemReward) gems")
+                            .foregroundStyle(.purple)
+                        
+                    }
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.black)
+                    )
+                }
                 
-                Text("\(mission.coinReward) coins")
-                Text("\(mission.gemReward) gems")
-                
+            } else if mission.rewardClaimed {
+                VStack {
+                    
+                    Text("Reward")
+                        .foregroundStyle(.yellow)
+                    
+                    Text("Claimed")
+                        .foregroundStyle(.purple)
+                    
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.black)
+                )
+            } else {
+                VStack {
+                    
+                    Text("\(mission.coinReward) coins")
+                    
+                    Text("\(mission.gemReward) gems")
+                    
+                }
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.white)
+                )
             }
-            
         }
         .padding()
         .frame(maxWidth: .infinity)
@@ -41,10 +78,4 @@ struct MissionCard: View {
                 .fill(Color.red)
         )
     }
-}
-
-#Preview {
-    
-    let m1 = Mission(name: "Missão 1", details: "Percorra 10 Km", metric: "km", progress: 10, goal: 10, coinReward: 15, gemReward: 5)
-    MissionCard(mission: m1)
 }

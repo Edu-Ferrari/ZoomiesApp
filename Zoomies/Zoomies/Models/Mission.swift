@@ -23,6 +23,7 @@ class Mission: Identifiable {
     var emblem: Emblem?
     var rewardClaimed: Bool = false
     var wasCompleted: Bool = false
+    var completionDate: Date?
     
     init(name: String, details: String, metric: String, progress: Double, goal: Double, startDate: Date? = nil, endDate: Date? = nil, coinReward: Int, gemReward: Int, emblem: Emblem? = nil) {
         self.name = name
